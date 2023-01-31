@@ -1,0 +1,9 @@
+mongo:
+  url: "mongodb://localhost"
+  port: 27017
+  password: ""
+  database: "ChatSystem"
+  collection : "Messages"
+linebot:
+  channelSecret: "504c05546fb48395ea883f9f8ef110a8"
+  channelToken: "wbHHVOWseQU8A8Au1BT9btlmTPOfrfxPD8qKUfj95iEyMVlX2qSsvouytONk2vir46IYZFVu281d+uTRG8b0/eO3s4SEmIfKausYRUn30h/ewUHlGE5X7yiaSo2UuySs+hahi7eG/d3gApY1kjHsgwdB04t89/1O/w1cDnyilFU="
