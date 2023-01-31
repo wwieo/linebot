@@ -1,6 +1,11 @@
 package utils
 
-import "github.com/spf13/viper"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+)
 
 type Utils struct {
 }
@@ -19,4 +24,11 @@ func (utils *Utils) GetConfig() *viper.Viper {
 		panic("config err: " + err.Error())
 	}
 	return config
+}
+
+func (utils *Utils) ReturnAPIResult(c *gin.Context, success bool, message interface{}) {
+	c.JSON(http.StatusOK, gin.H{
+		"success": success,
+		"message": message,
+	})
 }

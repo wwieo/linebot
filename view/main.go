@@ -6,6 +6,7 @@ import (
 	"linebot/config"
 	"linebot/model"
 	"linebot/service/controller"
+	"linebot/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/line/line-bot-sdk-go/linebot"
@@ -17,6 +18,7 @@ func InitRouter() *gin.Engine {
 		c.Data(200, "text/plain", []byte("Hello world!"))
 	})
 
+	router.GET("/messages", getMessages())
 	router.POST("/callback", receiveMessage())
 	router.POST("/pushMessage", pushMessage())
 
@@ -49,7 +51,7 @@ func receiveMessage() gin.HandlerFunc {
 					message.Text = userMessage.Text
 					message.MessageID = userMessage.ID
 					messageController := controller.NewMessageController()
-					err = messageController.InsertMessage(context.TODO(), message)
+					err = messageController.ReceiveMessage(context.TODO(), message)
 					if err != nil {
 						fmt.Println("InsertMessage error:", err)
 						return
@@ -67,10 +69,25 @@ func pushMessage() gin.HandlerFunc {
 		userID := context.PostForm("userID")
 		text := context.PostForm("text")
 		messages := []linebot.SendingMessage{linebot.NewTextMessage(text)}
-
 		_, err := botClient.PushMessage(userID, messages...).Do()
 		if err != nil {
 			fmt.Println("push message error:", err)
 		}
+	}
+}
+
+func getMessages() gin.HandlerFunc {
+	return func(ginContext *gin.Context) {
+		userID := ginContext.Query("userID")
+		messageController := controller.NewMessageController()
+		utils := utils.NewUtils()
+
+		messages, err := messageController.GetMessages(context.TODO(), userID)
+		if err != nil {
+			utils.ReturnAPIResult(ginContext, false, err)
+			return
+		}
+		utils.ReturnAPIResult(ginContext, true, messages)
+		return
 	}
 }
