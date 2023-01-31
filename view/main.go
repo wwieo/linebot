@@ -17,12 +17,13 @@ func InitRouter() *gin.Engine {
 		c.Data(200, "text/plain", []byte("Hello world!"))
 	})
 
-	router.POST("/callback", insertMessage())
+	router.POST("/callback", receiveMessage())
+	router.POST("/pushMessage", pushMessage())
 
 	return router
 }
 
-func insertMessage() gin.HandlerFunc {
+func receiveMessage() gin.HandlerFunc {
 	botClient := config.GetLinebotClient()
 	return func(ginContext *gin.Context) {
 		events, err := botClient.ParseRequest(ginContext.Request)
@@ -48,15 +49,28 @@ func insertMessage() gin.HandlerFunc {
 					message.Text = userMessage.Text
 					message.MessageID = userMessage.ID
 					messageController := controller.NewMessageController()
-					fmt.Println(message)
 					err = messageController.InsertMessage(context.TODO(), message)
 					if err != nil {
 						fmt.Println("InsertMessage error:", err)
+						return
 					}
 				}
 			}
 		}
 
 	}
+}
 
+func pushMessage() gin.HandlerFunc {
+	botClient := config.GetLinebotClient()
+	return func(context *gin.Context) {
+		userID := context.PostForm("userID")
+		text := context.PostForm("text")
+		messages := []linebot.SendingMessage{linebot.NewTextMessage(text)}
+
+		_, err := botClient.PushMessage(userID, messages...).Do()
+		if err != nil {
+			fmt.Println("push message error:", err)
+		}
+	}
 }

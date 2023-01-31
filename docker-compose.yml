@@ -1,5 +1,12 @@
 version: "2"
 services:
+  app:
+    container_name: linebot
+    restart: on-failure
+    image: linebot
+    working_dir: /app
+    ports:
+      - 8000:8000
   db:
     container_name: mongodb
     image: mongo:4.4
@@ -11,11 +18,4 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: 
     ports:
       - 27017:27017
-  app:
-    container_name: linebot
-    restart: on-failure
-    image: linebot
-    working_dir: /app
-    ports:
-      - 8000:8000
   

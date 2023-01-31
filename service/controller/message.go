@@ -22,7 +22,6 @@ func (messageController *MessageController) InsertMessage(context context.Contex
 		fmt.Println("insert message error:", err)
 		return err
 	}
-	fmt.Println("insert success")
 
 	return nil
 }
