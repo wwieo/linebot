@@ -31,6 +31,7 @@ func (messageController *MessageController) GetMessages(ctx context.Context, use
 	queryModel := &messagedao.Querymodel{
 		UserID: userID,
 	}
+	fmt.Println("eeee")
 	messages, err := messagedao.Gets(client, queryModel)
 
 	if err != nil {

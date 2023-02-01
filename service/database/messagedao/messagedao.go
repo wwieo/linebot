@@ -21,7 +21,7 @@ func Gets(client *mongo.Client, querymodel *Querymodel) ([]*model.Message, error
 	messages := []*model.Message{}
 	err = cursor.All(ctx, &messages)
 	if err != nil {
-		return messages, nil
+		return nil, err
 	}
 
 	return messages, nil

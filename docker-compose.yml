@@ -7,6 +7,8 @@ services:
     working_dir: /app
     ports:
       - 8000:8000
+    depends_on:
+      - db
   db:
     container_name: mongodb
     image: mongo:4.4
