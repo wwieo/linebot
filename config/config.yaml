@@ -1,5 +1,5 @@
 mongo:
-  url: "mongodb://db"
+  url: "mongodb://localhost"
   port: 27017
   password: ""
   database: "ChatSystem"

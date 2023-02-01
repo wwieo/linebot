@@ -11,11 +11,16 @@ var (
 	lineBotConfig = &model.Linebot{}
 )
 
+const (
+	channelSecret = "linebot.channelSecret"
+	channelToken  = "linebot.channelToken"
+)
+
 func init() {
 	config := utilsController.GetConfig()
 	lineBotConfig = &model.Linebot{
-		ChannelSecret: config.GetString("linebot.channelSecret"),
-		ChannelToken:  config.GetString("linebot.channelToken"),
+		ChannelSecret: config.GetString(channelSecret),
+		ChannelToken:  config.GetString(channelToken),
 	}
 }
 

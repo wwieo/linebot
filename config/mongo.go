@@ -16,14 +16,22 @@ var (
 	mongoConfig     = &database.MongoConfig{}
 )
 
+const (
+	mongoURL        = "mongo.url"
+	mongoPassword   = "mongo.password"
+	mongoDatabase   = "mongo.database"
+	mongoCollection = "mongo.collection"
+	mongoPort       = "mongo.port"
+)
+
 func init() {
 	config := utilsController.GetConfig()
 	mongoConfig = &database.MongoConfig{
-		Url:        config.GetString("mongo.url"),
-		Password:   config.GetString("mongo.password"),
-		Database:   config.GetString("mongo.database"),
-		Collection: config.GetString("mongo.collection"),
-		Port:       config.GetInt("mongo.port"),
+		Url:        config.GetString(mongoURL),
+		Password:   config.GetString(mongoPassword),
+		Database:   config.GetString(mongoDatabase),
+		Collection: config.GetString(mongoCollection),
+		Port:       config.GetInt(mongoPort),
 	}
 }
 

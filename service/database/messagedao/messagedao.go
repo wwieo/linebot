@@ -12,10 +12,13 @@ type Querymodel struct {
 	UserID string
 }
 
-func Gets(client *mongo.Client, querymodel *Querymodel) ([]*model.Message, error) {
-	ctx := context.TODO()
+func setCollection(client *mongo.Client) *mongo.Collection {
 	mongoConfig := config.GetMongoConfig()
-	coll := client.Database(mongoConfig.Database).Collection(mongoConfig.Collection)
+	return client.Database(mongoConfig.Database).Collection(mongoConfig.Collection)
+}
+
+func Gets(ctx context.Context, client *mongo.Client, querymodel *Querymodel) ([]*model.Message, error) {
+	coll := setCollection(client)
 	cursor, err := coll.Find(ctx, querymodel)
 
 	messages := []*model.Message{}
@@ -27,10 +30,9 @@ func Gets(client *mongo.Client, querymodel *Querymodel) ([]*model.Message, error
 	return messages, nil
 }
 
-func Insert(client *mongo.Client, message *model.Message) error {
-	mongoConfig := config.GetMongoConfig()
-	coll := client.Database(mongoConfig.Database).Collection(mongoConfig.Collection)
-	_, err := coll.InsertOne(context.TODO(), message)
+func Insert(ctx context.Context, client *mongo.Client, message *model.Message) error {
+	coll := setCollection(client)
+	_, err := coll.InsertOne(ctx, message)
 	if err != nil {
 		return err
 	}

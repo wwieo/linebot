@@ -2,10 +2,10 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"linebot/config"
 	"linebot/model"
 	"linebot/service/database/messagedao"
+	"log"
 )
 
 type MessageController struct {
@@ -17,9 +17,9 @@ func NewMessageController() *MessageController {
 
 func (messageController *MessageController) ReceiveMessage(ctx context.Context, message *model.Message) error {
 	client := config.GetMongoClient()
-	err := messagedao.Insert(client, message)
+	err := messagedao.Insert(ctx, client, message)
 	if err != nil {
-		fmt.Println("Insert message error:", err)
+		log.Println("Insert message error:", err)
 		return err
 	}
 
@@ -31,11 +31,9 @@ func (messageController *MessageController) GetMessages(ctx context.Context, use
 	queryModel := &messagedao.Querymodel{
 		UserID: userID,
 	}
-	fmt.Println("eeee")
-	messages, err := messagedao.Gets(client, queryModel)
-
+	messages, err := messagedao.Gets(ctx, client, queryModel)
 	if err != nil {
-		fmt.Println("Gets message error:", err)
+		log.Println("Gets message error:", err)
 		return nil, err
 	}
 

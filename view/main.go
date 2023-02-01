@@ -2,15 +2,25 @@ package view
 
 import (
 	"context"
-	"fmt"
 	"linebot/config"
 	"linebot/model"
 	"linebot/service/controller"
 	"linebot/utils"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
+
+var (
+	messageController *controller.MessageController
+	util              *utils.Utils
+)
+
+func init() {
+	messageController = controller.NewMessageController()
+	util = utils.NewUtils()
+}
 
 func InitRouter() *gin.Engine {
 	router := gin.Default()
@@ -27,22 +37,24 @@ func InitRouter() *gin.Engine {
 
 func receiveMessage() gin.HandlerFunc {
 	botClient := config.GetLinebotClient()
-	return func(ginContext *gin.Context) {
-		events, err := botClient.ParseRequest(ginContext.Request)
+	return func(c *gin.Context) {
+		events, err := botClient.ParseRequest(c.Request)
 		if err != nil {
-			fmt.Println("line bot parse request error:", err)
+			log.Println("line bot parse request error:", err)
 			return
 		}
 
 		for _, event := range events {
 			profile, err := botClient.GetProfile(event.Source.UserID).Do()
+
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
+				continue
 			}
 			message := &model.Message{
 				UserID:    profile.UserID,
-				UserName:  profile.DisplayName,
-				Timestamp: event.Timestamp,
+				Username:  profile.DisplayName,
+				Timestamp: &event.Timestamp,
 			}
 
 			if event.Type == linebot.EventTypeMessage {
@@ -53,7 +65,7 @@ func receiveMessage() gin.HandlerFunc {
 					messageController := controller.NewMessageController()
 					err = messageController.ReceiveMessage(context.TODO(), message)
 					if err != nil {
-						fmt.Println("InsertMessage error:", err)
+						log.Println("InsertMessage error:", err)
 						return
 					}
 				}
@@ -65,29 +77,34 @@ func receiveMessage() gin.HandlerFunc {
 
 func pushMessage() gin.HandlerFunc {
 	botClient := config.GetLinebotClient()
-	return func(context *gin.Context) {
-		userID := context.PostForm("userID")
-		text := context.PostForm("text")
-		messages := []linebot.SendingMessage{linebot.NewTextMessage(text)}
-		_, err := botClient.PushMessage(userID, messages...).Do()
+	return func(c *gin.Context) {
+		message := &model.Message{}
+		c.ShouldBind(message)
+
+		if message.UserID == "" {
+			util.ReturnAPIResult(c, false, "userID shouldn't be none")
+			return
+		}
+
+		messages := []linebot.SendingMessage{linebot.NewTextMessage(message.Text)}
+		_, err := botClient.PushMessage(message.UserID, messages...).Do()
 		if err != nil {
-			fmt.Println("push message error:", err)
+			log.Println("push message error:", err)
+			return
 		}
 	}
 }
 
 func getMessages() gin.HandlerFunc {
-	return func(ginContext *gin.Context) {
-		userID := ginContext.Query("userID")
-		messageController := controller.NewMessageController()
-		utils := utils.NewUtils()
-
-		messages, err := messageController.GetMessages(context.TODO(), userID)
+	return func(c *gin.Context) {
+		message := &model.Message{}
+		c.ShouldBind(message)
+		messages, err := messageController.GetMessages(context.TODO(), message.UserID)
 		if err != nil {
-			utils.ReturnAPIResult(ginContext, false, err)
+			util.ReturnAPIResult(c, false, err)
 			return
 		}
-		utils.ReturnAPIResult(ginContext, true, messages)
+		util.ReturnAPIResult(c, true, messages)
 		return
 	}
 }

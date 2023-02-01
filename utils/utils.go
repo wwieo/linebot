@@ -14,11 +14,17 @@ func NewUtils() *Utils {
 	return &Utils{}
 }
 
+const (
+	configPath = "./config"
+	configName = "config"
+	configType = "yaml"
+)
+
 func (utils *Utils) GetConfig() *viper.Viper {
 	config := viper.New()
-	config.AddConfigPath("./config")
-	config.SetConfigName("config")
-	config.SetConfigType("yaml")
+	config.AddConfigPath(configPath)
+	config.SetConfigName(configName)
+	config.SetConfigType(configType)
 
 	if err := config.ReadInConfig(); err != nil {
 		panic("config err: " + err.Error())
