@@ -6,12 +6,13 @@
     * Start the service with docker.
 
 ## Start service
+You will need to set the __*LineBot channel secret and token*__ when you first make up the service.
+
 ```
 # pull docker images and build service
 make build
 
-# start app and mongodb 
-# You will need to set the LineBot channel secret and token when you first make up the service. 
+# start app and mongodb
 make up
 
 # shut down all service
