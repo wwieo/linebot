@@ -10,7 +10,6 @@ type lineBot struct {
 	*linebot.Client
 }
 
-// initialize initializes the MySQL dao handle.
 func (bot *lineBot) initialize(ctx context.Context, cfg botConfig) {
 	client, err := linebot.New(
 		cfg.ChannelSecret,

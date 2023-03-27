@@ -2,15 +2,17 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"linebot/api"
+	"linebot/bot"
 	"linebot/database"
 )
 
 func main() {
-	fmt.Println("hello world!")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	database.Initialize(context.Background())
+	database.Initialize(ctx)
+	bot.Initialize(ctx)
 
 	router := api.InitRouter()
 	router.Run(":8000")

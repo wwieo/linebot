@@ -3,7 +3,7 @@ package bot
 import (
 	"context"
 	"github.com/line/line-bot-sdk-go/linebot"
-	"linebot/utils"
+	"os"
 )
 
 type Bot interface {
@@ -16,20 +16,20 @@ type botConfig struct {
 	ChannelToken  string
 }
 
-const (
-	channelSecret = "linebot.channelSecret"
-	channelToken  = "linebot.channelToken"
-)
-
 var botIntf Bot
 
+const (
+	channelSecret = "channelSecret"
+	channelToken  = "channelToken"
+)
+
 func Initialize(ctx context.Context) {
-	config := utils.GetConfig()
 	lineBotConfig := botConfig{
-		ChannelSecret: config.GetString(channelSecret),
-		ChannelToken:  config.GetString(channelToken),
+		ChannelSecret: os.Getenv(channelSecret),
+		ChannelToken:  os.Getenv(channelToken),
 	}
 
+	botIntf = &lineBot{}
 	botIntf.initialize(ctx, lineBotConfig)
 }
 

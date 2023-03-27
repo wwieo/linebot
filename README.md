@@ -1,19 +1,17 @@
-# Linebot
+# LineBot
 
 * Overview
-    * Receive and push messages to users by linebot.
+    * Receive and push messages to users by LineBot.
     * Save the user info and message in MongoDB.
     * Start the service with docker.
-
-## Set linebot config
-[Here](./config/config.yaml) to change the linebot channel secret and token.
 
 ## Start service
 ```
 # pull docker images and build service
 make build
 
-# start app and mongodb
+# start app and mongodb 
+# You will need to set the LineBot channel secret and token when you first make up the service. 
 make up
 
 # shut down all service
@@ -33,7 +31,7 @@ make down
 (url):8000/callback
 ```
 
-**Send messages to user by linebot**
+**Push messages to user by linebot**
 ```
 [POST] 
 (url):8000/pushMessage

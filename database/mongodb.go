@@ -13,7 +13,6 @@ type mongoDB struct {
 	*mongo.Database
 }
 
-// initialize initializes the MySQL dao handle.
 func (db *mongoDB) initialize(ctx context.Context, cfg dbConfig) {
 	URI := fmt.Sprintf("%s:%d", cfg.Url, cfg.Port)
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(URI))
